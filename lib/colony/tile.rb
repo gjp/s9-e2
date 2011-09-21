@@ -12,16 +12,26 @@ module Colony
       @players = []
     end
 
-    def neutral?
-      @owner == NEUTRAL
-    end
-
-    def friendly?
-      @owner == FRIENDLY
-    end
-
-    def enemy?
-      @owner == ENEMY
+    def to_s
+      # FIXME: Having multiple overlapping items in a tile is currently a problem.
+      # Need color or graphics, otherwise players obscure what they're standing on,
+      # including each other :(
+      
+      if @players.size > 0
+        @players[0].id.to_s
+      elsif @hive
+        GLYPHS[:hive]
+      elsif @resource
+        @owner == FRIENDLY ? GLYPHS[:friendly_node] : GLYPHS[:neutral_node]
+      elsif @sentry
+        GLYPHS[:sentry]
+      elsif @owner == FRIENDLY
+        GLYPHS[:friendly]
+      elsif @owner == ENEMY
+        GLYPHS[:enemy]
+      else
+        GLYPHS[:empty]
+      end
     end
 
     def build_friendly_hive
@@ -34,10 +44,26 @@ module Colony
       @owner = ENEMY
     end
 
+    def empty?
+      !@hive && !@resource && !@sentry && @players.size == 0
+    end
+
     def build_resource
       @resource = true
     end
 
+    def neutral?
+      @owner == NEUTRAL
+    end
+
+    def friendly?
+      @owner == FRIENDLY
+    end
+
+    def enemy?
+      @owner == ENEMY
+    end
+ 
     def hive?
       @hive
     end

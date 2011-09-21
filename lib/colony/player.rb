@@ -7,21 +7,29 @@ module Colony
 
     def initialize(id)
       @id = id
+      reset
+    end
+
+    def reset
       @hp = PLAYER_HP
       @food = 0
-      @movement = 0
+      @movement = PLAYER_MOVEMENT
       @hand = []
     end
 
-    def turn
-      #FIXME important!!
-      p "Player #{@id} turn."
+    def turn(game)
+      reset if @hp <= 0
+      draw_cards #FIXME
       @movement = PLAYER_MOVEMENT
       respond_to_input
     end
 
     def respond_to_input
-      puts "Input loop goes here."
+      puts "Player #{@id}: You have #{@hp} HP, #{@food} food, and #{@movement} movement"
+      puts "WASD to move, 1 or 2 to play a card"
+    end
+
+    def draw_cards
     end
 
     def add_hp(hp)
@@ -29,6 +37,7 @@ module Colony
     end
 
     def subtract_hp(hp)
+      #FIXME if dead, temporarily remove player from map
       @hp -= hp
     end
 

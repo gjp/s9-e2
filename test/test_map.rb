@@ -16,12 +16,12 @@ describe Map do
       @map.width.must_equal MAP_COLS
     end
 
-    it "should contain hives" do
-      #
+    it "should build hives" do
+      @map.hive_tiles.size.must_equal 2 
     end
 
     it "should build resource nodes" do
-      #p @map.resource_nodes
+      @map.resource_tiles.size.must_equal RESOURCE_NODE_COUNT
     end
 
   end

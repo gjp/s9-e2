@@ -6,7 +6,6 @@ module Colony
 
     def self.run(argv)
       #FIXME argv ignored
-      game = new
       loop do
         game = new
         game.prompt
@@ -37,6 +36,7 @@ module Colony
     def game_loop
       until @game_over
         @players.each do |player|
+          puts @map.to_s
           player.turn
           win && break if win?
         end
