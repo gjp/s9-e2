@@ -1,11 +1,13 @@
 module Colony
   class Player
 
-    attr_accessor :hp, :food, :movement
+    attr_accessor :id, :hp, :food, :movement
 
     include MagicNumbers
+    include HighLine::SystemExtensions
 
-    def initialize(id)
+    def initialize(game, id)
+      @game = game #hrrrrm.
       @id = id
       reset
     end
@@ -15,18 +17,13 @@ module Colony
       @food = 0
       @movement = PLAYER_MOVEMENT
       @hand = []
+      # move player to start
     end
 
-    def turn(game)
+    def start_turn(game)
       reset if @hp <= 0
-      draw_cards #FIXME
+      draw_cards #stub
       @movement = PLAYER_MOVEMENT
-      respond_to_input
-    end
-
-    def respond_to_input
-      puts "Player #{@id}: You have #{@hp} HP, #{@food} food, and #{@movement} movement"
-      puts "WASD to move, 1 or 2 to play a card"
     end
 
     def draw_cards

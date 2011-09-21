@@ -1,3 +1,4 @@
+require 'highline/system_extensions'
 require_relative 'colony/version'
 require_relative 'colony/magic_numbers'
 require_relative 'colony/game'

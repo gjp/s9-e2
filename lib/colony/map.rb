@@ -75,5 +75,6 @@ module Colony
     def resource_tiles
       @tiles.flatten.select{|t| t.resource?}
     end
+
   end
 end

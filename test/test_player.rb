@@ -5,7 +5,8 @@ include MagicNumbers
 
 describe Player do
   before do
-    @player = Player.new(1)
+    #FIXME: the 2nd argument is temporary
+    @player = Player.new(1, nil)
   end
  
   describe "a player" do
