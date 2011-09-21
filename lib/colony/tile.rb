@@ -34,6 +34,10 @@ module Colony
       @owner = ENEMY
     end
 
+    def build_resource
+      @resource = true
+    end
+
     def hive?
       @hive
     end

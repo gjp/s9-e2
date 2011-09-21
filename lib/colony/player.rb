@@ -3,11 +3,25 @@ module Colony
 
     attr_accessor :hp, :food, :movement
 
-    def initialize
-      @hp = 0
+    include MagicNumbers
+
+    def initialize(id)
+      @id = id
+      @hp = PLAYER_HP
       @food = 0
       @movement = 0
       @hand = []
+    end
+
+    def turn
+      #FIXME important!!
+      p "Player #{@id} turn."
+      @movement = PLAYER_MOVEMENT
+      respond_to_input
+    end
+
+    def respond_to_input
+      puts "Input loop goes here."
     end
 
     def add_hp(hp)
