@@ -1,58 +1,46 @@
-Challenge Exercise: Exponential Chaos
-=====================================
+# Colony
 
-_written by: Shane Emmons_
+You're a soldier in an alien hive. It's been a pretty good life so far: dismember your enemies, feed choice bits to your queen; you know, the usual. Unfortunately, an aggressive new hive has spawned nearby. Their drones are leaving ineradicable pheromone trails all around their hive, gradually engulfing everything they encounter with their stink. Your own gatherers can't pass through this. If you enter their territory, you're attacked on scent. To make matters worse, your old queen is near the end of her life and you were just getting started on gathering the food to feed a new queen, who can fly off and start a new hive in fresh, better-smelling territory.  Of course you'll all be left behind to be torn limb from limb, but that's a bug's life.
 
-My wife and I play a lot of board games. After getting beat, time and time
-again, I decided it was time to find some games where we could work together.
-After experimenting with a few, we quickly found our two favorites: Pandemic
-and Forbidden Island. But now that we've played them so much, we're looking for
-more. That's where you come in. 
+### Map
 
-During this assignment, you are going to create
-your own cooperative board game using similar mechanics to those in Pandemic
-and Forbidden Island. You should attempt to model the game and let a single
-player play a few turns via the console. You don't need fancy graphics or
-visual design.
+The two hives start on opposite sides of a simple grid. All territory is initially unclaimed. Resource nodes are scattered semi-randomly around the grid.
 
-## Examples of chaotic cooperative games with exponential elements
+### The Threat
 
-Below are some links to videos and/or rules for several games that you can draw
-inspiration from.
+The other hive is expanding their territory at an ever-increasing rate. You can only claim unclaimed territory, but they can claim yours.
 
-Pandemic:
+### Resources
+You can claim food nodes by moving to them. This enables your gatherers to find them, which enables a fixed income of resources from each claimed node after each turn. You can also carry food and walk it home or trade it, bucket-brigade style.
 
-- http://www.youtube.com/watch?v=5JxMh1FP4b0
-- http://www.zmangames.com/boardgames/pandemic.htm
-- http://www.youtube.com/watch?v=6vaJhiht8NA&feature=fvst
+### Winning and Losing
+*Win*: If your hive gathers N food, your new queen reaches maturity.
+*Loss*: If the enemy hive engulfs all resource nodes or reaches the entrance to your hive, you all go down with your queen.
 
-Forbidden Island:
+### Game rounds
+The enemy hive has an expansion phase each round, beginning from their hive. This is an ever-increasing random walk from the existing edge of their territory.
 
-- http://www.youtube.com/watch?v=aYVOTPsWeN4
+- If the enemy encounters a Sentry (see below), movement is halted for a number of spaces equal to the soldier's HP.
+- If the enemy encounters a resource node, it will attempt to engulf it.
+- Enemy expansion is slowed but not stopped on spaces which contain a player pheromone trail.
 
-Ghost Stories: 
+### Player turns
 
-- http://boardgamegeek.com/boardgame/37046/ghost-stories
+Players draw up to two cards. Sample cards:
 
-Red November: 
+- Sentry: Place a marker which will cause an NPC soldier to park here, slowing enemy encroachment (many in deck)
+- Speed boost: Move extra spaces during this turn
+- Alien cologne: Pass through enemy territory without consequence
+- Scavenge: Collect food while not on a resource node
+- Enemy Scout: Player immediate loses N HP
 
-- http://boardgamegeek.com/boardgame/36946/red-november
+### Movement 
+Players move up to N spaces. Players automatically leave their own pheromone trail wherever they go. Players may capture a neutral resource node by moving to it, ending their turn. Movement in enemy territory is halved.
 
-## Exercise Summary
+### Health
+Players start with N health. They lose health per move while passing through enemy territory, as they are continually attacked by drones. Death ends a turn. Players may respawn at the hive on the next turn, but there's a resource penalty.
 
-- Design and model a game with the following features:
-  - A map which can be represented as a graph structure
-  - Rules that result in exponentially increasing danger as the game progresses
-  - Resources which players must collect repeatedly in sets to win the game
-  - Rules that create tension between slowing down immediate danger and
-    collecting all the needed resources
-- Create your own unique theme, don't copy the scenarios from the example games
-- Implement at least a single player mode which demonstrates the game setup and the
-  different actions that can take place on a turn.
+Players may eat food they are currently carrying in order to heal, at the end of their turn.
 
-## Submission Guidelines
-
-If you plan to work on this exercise, you should fork this repository 
-and push code early and often during the course. The course 
-guidelines PDF explains the submission process in detail, but please 
-contact an instructor if you have any questions.
+### Carrying resources
+Players may choose to carry N food from a resource node, to heal, trade, or carry home.
