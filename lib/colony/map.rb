@@ -25,26 +25,6 @@ module Colony
       end
     end
 
-    def to_s
-      # yuck. perhaps I'll have time to make a nice interface with curses
-      hr = '+' + '-' * MAP_COLS + "+\n"
-      out = hr.dup
-
-      @tiles.each do |row|
-        out << '|' + row.map { |col| col.to_s }.join + "|\n"
-      end
-
-      out << hr
-    end
-
-    def width
-      @tiles[0].size
-    end
-
-    def height
-      @tiles.size
-    end
-
     def build_hives
       @tiles[0][0].build_friendly_hive
       @tiles[MAP_ROWS-1][MAP_COLS-1].build_enemy_hive
@@ -66,16 +46,24 @@ module Colony
       end
     end
 
-    def friendly_hive
-      @fh ||= hive_tiles.select{ |t| t.friendly?}[0]
+    def to_s
+      # yuck. perhaps I'll have time to make a nice interface with curses
+      hr = '+' + '-' * MAP_COLS + "+\n"
+      out = hr.dup
+
+      @tiles.each do |row|
+        out << '|' + row.map { |col| col.to_s }.join + "|\n"
+      end
+
+      out << hr
     end
-    
-    def enemy_hive
-      @eh ||= hive_tiles.select{ |t| t.enemy?}[0]
+
+    def width
+      @tiles[0].size
     end
-    
-    def hive_tiles
-      @ht ||= @tiles.flatten.select{ |t| t.hive?}
+
+    def height
+      @tiles.size
     end
 
     def friendly_tiles
@@ -86,8 +74,24 @@ module Colony
       @tiles.flatten.select{ |t| t.enemy?}
     end
 
+    def friendly_resource_tiles
+      resource_tiles.select{ |t| t.friendly?}
+    end
+
     def resource_tiles
-      @tiles.flatten.select{ |t| t.resource?}
+      @_rt = @tiles.flatten.select{ |t| t.resource?}
+    end
+
+    def friendly_hive
+      @_fh ||= hive_tiles.select{ |t| t.friendly?}[0]
+    end
+    
+    def enemy_hive
+      @_eh ||= hive_tiles.select{ |t| t.enemy?}[0]
+    end
+    
+    def hive_tiles
+      @_ht ||= @tiles.flatten.select{ |t| t.hive?}
     end
 
   end

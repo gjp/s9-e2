@@ -3,14 +3,13 @@ module Colony
 
     include MagicNumbers
 
-    def initialize(game)
-      @game = game #hrrrrm.
+    def initialize(map)
+      @map = map #hrrrrm.
       @sentry = nil
       @expansion_rate = ENEMY_EXPANSION_RATE
     end
 
     def turn(game)
-      puts "\nEnemy turn."
       expand_territory
       increase_expansion_rate
     end
@@ -23,11 +22,10 @@ module Colony
     def expand_territory
       puts "Pretend we're expanding territory..."
       movement = @expansion_rate
-      # This'll be fun.
-      #
+
       # If we're attacking a sentry, try to finish it off first.
       # This absorbs movement points.
-      #
+      
       # Obtain a list of all enemy tiles which have at least one neighboring tile
       # which is not an enemy tile. Sort by number of open neighbors, ascending.
       # This prefers filling internal gaps to sending out random shoots.

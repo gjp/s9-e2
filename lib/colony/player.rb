@@ -6,8 +6,8 @@ module Colony
     include MagicNumbers
     include HighLine::SystemExtensions
 
-    def initialize(game, id)
-      @game = game #hrrrrm.
+    def initialize(map, id)
+      @map = map #hrrrrm.
       @id = id
       reset
     end
@@ -17,7 +17,7 @@ module Colony
       @food = 0
       @movement = PLAYER_MOVEMENT
       @hand = []
-      @tile = move_to(@game.map.friendly_hive) if @game
+      @tile = move_to(@map.friendly_hive) if @map
     end
 
     def move_to(tile)

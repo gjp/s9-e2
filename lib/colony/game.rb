@@ -17,9 +17,11 @@ module Colony
       @map = Map.new
       @players = []
       @enemy = Enemy.new(self)
+
       @team_resources = 0
-      @turn = 0
+      @round = 0
       @game_over = false
+
       @hl = HighLine.new
     end
 
@@ -33,37 +35,46 @@ module Colony
     end
 
     def add_player(i)
-      player = Player.new(self, i)
+      player = Player.new(@map, i)
       @players << player
     end
 
     def game_loop
       until @game_over
+        @round += 1
         @players.each do |player|
           player.start_turn
           input_for(player)
           win && break if win?
         end
 
+        gather_resources
+        win if win?
+
         @enemy.turn(self)
         lose && break if lose?
       end
     end 
 
+    def update_display(player)
+      puts
+      puts @map.to_s
+
+      puts "Round #{@round}: Your hive has #{@team_resources} food."
+      puts "Player #{player.id}: You have #{player.hp} HP, #{player.food} food,"\
+           " and #{player.movement} movement"
+      # FIXME only display available moves
+      puts "WASD to move, 1 or 2 to play a card"
+    end
+
     def input_for(player)
       turn_over = false
 
       until turn_over
-        puts
-        puts @map.to_s
-
-        puts "Player #{player.id}: You have #{player.hp} HP, #{player.food} food,"\
-             " and #{player.movement} movement"
-        puts "WASD to move, 1 or 2 to play a card"
+        update_display(player)
 
         k = get_character
 
-        #FIXME: copypasta for quick keyboard test
         case k.chr
         when 'w'
           player.move(:up)
@@ -97,7 +108,6 @@ module Colony
  
     def win?
       @team_resources >= WINNING_RESOURCE_COUNT
-      false
     end
 
     def lose?
@@ -109,6 +119,11 @@ module Colony
 
     def game_over?
       win? or lose?
+    end
+
+    def gather_resources
+      c = @map.friendly_resource_tiles.count
+      @team_resources += c * RESOURCES_GATHERED_PER_ROUND
     end
 
   end
