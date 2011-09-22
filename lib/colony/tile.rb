@@ -2,7 +2,7 @@ module Colony
   class Tile
     include MagicNumbers
 
-    attr_reader :owner
+    attr_reader :owner, :neighbors
 
     def initialize
       @owner = NEUTRAL
@@ -10,6 +10,15 @@ module Colony
       @resource = false
       @sentry = nil
       @players = []
+      @neighbors = {}
+    end
+
+    def connect(direction, tile)
+      @neighbors[direction] = tile
+    end
+
+    def neighbor(direction)
+      @neighbors[direction]
     end
 
     def to_s
@@ -18,7 +27,7 @@ module Colony
       # including each other :(
       
       if @players.size > 0
-        @players[0].id.to_s
+        @players[0]
       elsif @hive
         GLYPHS[:hive]
       elsif @resource
@@ -42,6 +51,14 @@ module Colony
     def build_enemy_hive
       @hive = true
       @owner = ENEMY
+    end
+
+    def add_player(player)
+      @players << player
+    end
+
+    def remove_player(player)
+      @players.delete(player)
     end
 
     def empty?

@@ -27,21 +27,21 @@ module Colony
       puts "Colony - a console game about giant bugs."
       #players = gets.to_i
       players = 2
-      players.times { |i| add_player(i) }
+      1.upto(players) { |i| add_player(i) }
 
       game_loop
     end
 
     def add_player(i)
-      @players << Player.new(self, i)
+      player = Player.new(self, i)
+      @players << player
     end
 
     def game_loop
       until @game_over
         @players.each do |player|
-          #puts @map.to_s
-          player.start_turn(self)
-          respond_to_input(player)
+          player.start_turn
+          input_for(player)
           win && break if win?
         end
 
@@ -50,7 +50,7 @@ module Colony
       end
     end 
 
-    def respond_to_input(player)
+    def input_for(player)
       turn_over = false
 
       until turn_over
@@ -66,17 +66,13 @@ module Colony
         #FIXME: copypasta for quick keyboard test
         case k.chr
         when 'w'
-          puts 'move up'
-          player.subtract_movement(1)
+          player.move(:up)
         when 'a'
-          puts 'move left'
-          player.subtract_movement(1)
+          player.move(:left)
         when 's'
-          puts 'move down'
-          player.subtract_movement(1)
+          player.move(:down)
         when 'd'
-          puts 'move right'
-          player.subtract_movement(1)
+          player.move(:right)
         when '1'
           puts 'play card 1'
         when '2'

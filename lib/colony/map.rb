@@ -6,20 +6,34 @@ module Colony
     attr_reader :tiles
 
     def initialize
+      build_tiles
+      build_hives
+      build_resources
+    end
+
+    def build_tiles
       @tiles = Array.new(MAP_ROWS) {
                Array.new(MAP_COLS) {Tile.new} }
-      build_hives
-      choose_resource_locations
+
+      @tiles.each_with_index do |row, r|
+        row.each_with_index do |tile, c|
+          tile.connect( :left,  @tiles[r][c-1] ) if c-1 >= 0
+          tile.connect( :right, @tiles[r][c+1] ) if c+1 < MAP_COLS
+          tile.connect( :up,    @tiles[r-1][c] ) if r-1 >= 0
+          tile.connect( :down,  @tiles[r+1][c] ) if r+1 < MAP_ROWS
+        end
+      end
     end
 
     def to_s
       # yuck. perhaps I'll have time to make a nice interface with curses
-      
       hr = '+' + '-' * MAP_COLS + "+\n"
-      out = '' + hr
-      @tiles.each_with_index do |row, r|
+      out = hr.dup
+
+      @tiles.each do |row|
         out << '|' + row.map { |col| col.to_s }.join + "|\n"
       end
+
       out << hr
     end
 
@@ -36,7 +50,7 @@ module Colony
       @tiles[MAP_ROWS-1][MAP_COLS-1].build_enemy_hive
     end
 
-    def choose_resource_locations
+    def build_resources
       #FIXME: This needs a zoned algorithm to be somewhat fair
       # for now it's just random
       
@@ -47,33 +61,33 @@ module Colony
 
         next unless @tiles[r][c].empty?
 
-        build_resource(r, c)
+        @tiles[r][c].build_resource
         nodes += 1
       end
     end
 
-    def build_resource(row, col)
-      @tiles[row][col].build_resource
+    def friendly_hive
+      @fh ||= hive_tiles.select{ |t| t.friendly?}[0]
     end
-
-    def move_player(player, from, to)
-      #FIXME important!!
+    
+    def enemy_hive
+      @eh ||= hive_tiles.select{ |t| t.enemy?}[0]
+    end
+    
+    def hive_tiles
+      @ht ||= @tiles.flatten.select{ |t| t.hive?}
     end
 
     def friendly_tiles
-      @tiles.flatten.select{|t| t.friendly?}
+      @tiles.flatten.select{ |t| t.friendly?}
     end
 
     def enemy_tiles
-      @tiles.flatten.select{|t| t.enemy?}
-    end
-
-    def hive_tiles
-      @tiles.flatten.select{|t| t.hive?}
+      @tiles.flatten.select{ |t| t.enemy?}
     end
 
     def resource_tiles
-      @tiles.flatten.select{|t| t.resource?}
+      @tiles.flatten.select{ |t| t.resource?}
     end
 
   end

@@ -4,7 +4,6 @@ require_relative '../lib/colony.rb'
 include Colony
 
 describe Map do
-  include MagicNumbers
 
   before do
     @map = Map.new
@@ -17,7 +16,11 @@ describe Map do
     end
 
     it "should build hives" do
-      @map.hive_tiles.size.must_equal 2 
+      @map.friendly_hive.wont_be_nil
+      @map.enemy_hive.wont_be_nil
+    end
+
+    it "should locate the friendly hive" do
     end
 
     it "should build resource nodes" do
