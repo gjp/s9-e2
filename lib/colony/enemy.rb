@@ -3,13 +3,13 @@ module Colony
 
     include MagicNumbers
 
-    def initialize(game)
-      @game = game #hrrrrm.
+    def initialize(map)
+      @map = map
       @sentry = nil
       @expansion = ENEMY_BASE_EXPANSION
     end
 
-    def turn(game)
+    def turn
       expand_territory
     end
 
@@ -21,7 +21,8 @@ module Colony
     def expand_territory
       puts "Expanding enemy territory..."
       movement = @expansion
-      choices_choices = @game.map.ripe_for_conquest
+      choices_choices = @map.ripe_for_conquest
+      player_engulfed = false 
 
       # FIXME If we're attacking a sentry, try to finish it off first.
       
@@ -30,7 +31,7 @@ module Colony
         t.friendly? ? movement -= 2 : movement -= 1
         t.enemy
 
-        @game.lose if t.hive?
+        player_engulfed = true if t.hive?
 
         if t.resource?
           increase_expansion(ENEMY_CAPTURE_BONUS)
@@ -41,6 +42,8 @@ module Colony
       end
 
       increase_expansion(ENEMY_ACCELERATION)
+
+      player_engulfed
     end
     
   end

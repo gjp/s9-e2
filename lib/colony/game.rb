@@ -1,6 +1,6 @@
 module Colony
   class Game
-    attr_reader :map, :players, :team_resources, :turn
+    attr_reader :map, :players, :team_resources, :round
 
     include MagicNumbers
     include HighLine::SystemExtensions
@@ -15,8 +15,8 @@ module Colony
 
     def initialize
       @map = Map.new
+      @enemy = Enemy.new(@map)
       @players = []
-      @enemy = Enemy.new(self)
 
       @team_resources = 0
       @round = 0
@@ -51,8 +51,7 @@ module Colony
         gather_resources
         win if win?
 
-        @enemy.turn(self)
-        lose && break if lose?
+        lose if @enemy.turn
       end
     end 
 
