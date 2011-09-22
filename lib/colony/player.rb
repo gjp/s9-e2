@@ -36,6 +36,7 @@ module Colony
           adjust_movement(-2)
           adjust_hp(-1)
         else
+          t.friendly
           adjust_movement(-1)
         end
       end

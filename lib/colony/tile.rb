@@ -77,8 +77,16 @@ module Colony
       @owner == FRIENDLY
     end
 
+    def friendly
+      @owner = FRIENDLY
+    end
+
     def enemy?
       @owner == ENEMY
+    end
+
+    def enemy
+      @owner = ENEMY
     end
  
     def hive?
