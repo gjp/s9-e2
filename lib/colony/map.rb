@@ -67,31 +67,43 @@ module Colony
     end
 
     def friendly_tiles
-      @tiles.flatten.select{ |t| t.friendly?}
+      @tiles.flatten.select{ |t| t.friendly? }
     end
 
     def enemy_tiles
-      @tiles.flatten.select{ |t| t.enemy?}
+      @tiles.flatten.select{ |t| t.enemy? }
+    end
+
+    def ripe_for_conquest
+      available_tiles = []
+
+      enemy_tiles.select do |t|
+        t.neighbors.each_value do |n|
+          available_tiles << n unless n.enemy?
+        end
+      end
+
+      available_tiles
     end
 
     def friendly_resource_tiles
-      resource_tiles.select{ |t| t.friendly?}
+      resource_tiles.select{ |t| t.friendly? }
     end
 
     def resource_tiles
-      @_rt = @tiles.flatten.select{ |t| t.resource?}
+      @_rt = @tiles.flatten.select{ |t| t.resource? }
     end
 
     def friendly_hive
-      @_fh ||= hive_tiles.select{ |t| t.friendly?}[0]
+      @_fh ||= hive_tiles.select{ |t| t.friendly? }[0]
     end
     
     def enemy_hive
-      @_eh ||= hive_tiles.select{ |t| t.enemy?}[0]
+      @_eh ||= hive_tiles.select{ |t| t.enemy? }[0]
     end
     
     def hive_tiles
-      @_ht ||= @tiles.flatten.select{ |t| t.hive?}
+      @_ht ||= @tiles.flatten.select{ |t| t.hive? }
     end
 
   end

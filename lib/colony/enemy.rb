@@ -3,37 +3,44 @@ module Colony
 
     include MagicNumbers
 
-    def initialize(map)
-      @map = map #hrrrrm.
+    def initialize(game)
+      @game = game #hrrrrm.
       @sentry = nil
-      @expansion_rate = ENEMY_EXPANSION_RATE
+      @expansion = ENEMY_BASE_EXPANSION
     end
 
     def turn(game)
       expand_territory
-      increase_expansion_rate
     end
 
-    def increase_expansion_rate
-      @expansion_rate += ENEMY_EXPANSION_FACTOR
-      puts "Expansion rate is now #{@expansion_rate}"
+    def increase_expansion(i)
+      @expansion += i
     end
 
+    # FIXME factor this
     def expand_territory
-      puts "Pretend we're expanding territory..."
-      movement = @expansion_rate
+      puts "Expanding enemy territory..."
+      movement = @expansion
+      choices_choices = @game.map.ripe_for_conquest
 
-      # If we're attacking a sentry, try to finish it off first.
-      # This absorbs movement points.
+      # FIXME If we're attacking a sentry, try to finish it off first.
       
-      # Obtain a list of all enemy tiles which have at least one neighboring tile
-      # which is not an enemy tile. Sort by number of open neighbors, ascending.
-      # This prefers filling internal gaps to sending out random shoots.
-      #
-      # Pick the first tile on the list and grow in random directions until we're
-      # wedged in or out of movement points.
-      #
-      # If points remain, pick the next tile off the stack and repeat.
+      while movement > 0 
+        t = choices_choices.sample
+        t.friendly? ? movement -= 2 : movement -= 1
+        t.enemy
+
+        @game.lose if t.hive?
+
+        if t.resource?
+          increase_expansion(ENEMY_CAPTURE_BONUS)
+          movement += ENEMY_CAPTURE_BONUS
+        end
+
+        t.neighbors.each_value { |n| choices_choices << n unless n.enemy? }
+      end
+
+      increase_expansion(ENEMY_ACCELERATION)
     end
     
   end
