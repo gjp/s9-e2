@@ -21,29 +21,27 @@ module Colony
     def expand_territory
       puts "Expanding enemy territory..."
       movement = @expansion
-      choices_choices = @map.ripe_for_conquest
+      choices = @map.ripe_for_conquest
       player_engulfed = false 
 
       # FIXME If we're attacking a sentry, try to finish it off first.
       
       while movement > 0 
-        t = choices_choices.sample
-        t.friendly? ? movement -= 2 : movement -= 1
-        t.enemy
+        tile = choices.sample
+        choices.delete(tile)
 
-        player_engulfed = true if t.hive?
+        tile.friendly? ? movement -= 2 : movement -= 1
+        tile.pwn
 
-        if t.resource?
+        if tile.resource?
           increase_expansion(ENEMY_CAPTURE_BONUS)
           movement += ENEMY_CAPTURE_BONUS
         end
 
-        t.neighbors.each_value { |n| choices_choices << n unless n.enemy? }
+        tile.neighbors.each_value { |n| choices << n unless n.pwned? }
       end
 
       increase_expansion(ENEMY_ACCELERATION)
-
-      player_engulfed
     end
     
   end

@@ -7,10 +7,8 @@ module Colony
 
     def self.run(argv)
       #FIXME argv ignored
-      loop do
-        game = new
-        game.prompt
-      end
+      game = new
+      game.prompt
     end
 
     def initialize
@@ -42,6 +40,7 @@ module Colony
     def game_loop
       until @game_over
         @round += 1
+
         @players.each do |player|
           player.start_turn
           input_for(player)
@@ -51,7 +50,8 @@ module Colony
         gather_resources
         win if win?
 
-        lose if @enemy.turn
+        @enemy.turn
+        lose if lose?
       end
     end 
 
@@ -69,7 +69,7 @@ module Colony
     def input_for(player)
       turn_over = false
 
-      until turn_over
+      until turn_over?(player)
         update_display(player)
 
         k = get_character
@@ -90,18 +90,30 @@ module Colony
         else
           puts 'invalid move'
         end
+      end
+    end
 
-        turn_over = true if player.movement <= 0
+    def turn_over?(player)
+      if player.hp <= 0
+        puts "*** Oh noes! You have died! You'll respawn at the hive next round. ***"
+        player.reset
+        true
+      elsif player.movement <= 0
+        true
+      else
+        false
       end
     end
 
     def win
-      puts "You win!"
+      puts @map.to_s
+      puts "Your queen has matured! There she goes, off into the sunset."
       @game_over = true
     end
 
     def lose
-      puts "You lose!"
+      puts @map.to_s
+      puts "Your hive has been overrun. Everybody dies...even the queen."
       @game_over = true
     end
  
@@ -110,14 +122,7 @@ module Colony
     end
 
     def lose?
-      # FIXME
-      # @map.friendly_hive.engulfed?
-      # @map.enemy_resource_nodes.count = RESOURCE_NODE_COUNT
-      false
-    end
-
-    def game_over?
-      win? or lose?
+      !@map.friendly_hive
     end
 
     def gather_resources

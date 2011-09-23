@@ -32,7 +32,7 @@ module Colony
       if t = @tile.neighbor(direction)
         move_to(t)
 
-        if t.enemy?
+        if t.pwned?
           adjust_movement(-2)
           adjust_hp(-1)
         else
@@ -44,7 +44,6 @@ module Colony
 
     def start_turn
       puts "\n***** Player #{@id}'s turn begins *****"
-      reset if @hp <= 0
       draw_cards #stub
       @movement = PLAYER_MOVEMENT
     end
@@ -55,12 +54,7 @@ module Colony
 
     def adjust_hp(hp)
       @hp += hp
-      if @hp <= 0
-        puts "*** Oh noes! You have died! You'll respawn at the hive next round. ***"
-        @tile.remove_player(@id)
-      end
-      @hp
-    end
+   end
 
     def adjust_food(food)
       @food += food 

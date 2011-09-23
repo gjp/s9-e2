@@ -6,15 +6,18 @@ module Colony
     attr_reader :tiles
 
     def initialize
-      build_tiles
+      create_tiles
+      connect_tiles
       build_hives
       build_resources
     end
 
-    def build_tiles
+    def create_tiles
       @tiles = Array.new(MAP_ROWS) {
                Array.new(MAP_COLS) {Tile.new} }
+    end
 
+    def connect_tiles
       @tiles.each_with_index do |row, r|
         row.each_with_index do |tile, c|
           tile.connect( :left,  @tiles[r][c-1] ) if c-1 >= 0
@@ -48,11 +51,11 @@ module Colony
 
     def to_s
       # yuck. perhaps I'll have time to make a nice interface with curses
-      hr = '+' + '-' * MAP_COLS + "+\n"
+      hr = '+' + '-' * MAP_COLS * 2 + "+\n"
       out = hr.dup
 
       @tiles.each do |row|
-        out << '|' + row.map { |col| col.to_s }.join + "|\n"
+        out << '|' + row.map { |col| "#{col.to_s} " }.join + "|\n"
       end
 
       out << hr
@@ -66,44 +69,44 @@ module Colony
       @tiles.size
     end
 
-    def friendly_tiles
-      @tiles.flatten.select{ |t| t.friendly? }
-    end
-
-    def enemy_tiles
-      @tiles.flatten.select{ |t| t.enemy? }
-    end
-
-    def ripe_for_conquest
+   def ripe_for_conquest
       available_tiles = []
 
       enemy_tiles.select do |t|
         t.neighbors.each_value do |n|
-          available_tiles << n unless n.enemy?
+          available_tiles << n unless n.pwned?
         end
       end
 
       available_tiles
     end
 
+    def enemy_tiles
+      @tiles.flatten.select(&:pwned?)
+    end
+ 
     def friendly_resource_tiles
-      resource_tiles.select{ |t| t.friendly? }
+      resource_tiles.select(&:friendly?)
+    end
+
+    def enemy_resource_tiles
+      resource_tiles.select(&:pwned?)
     end
 
     def resource_tiles
-      @_rt = @tiles.flatten.select{ |t| t.resource? }
+      @_rt = @tiles.flatten.select(&:resource?)
     end
 
     def friendly_hive
-      @_fh ||= hive_tiles.select{ |t| t.friendly? }[0]
+      hive_tiles.select(&:friendly?)[0]
     end
     
     def enemy_hive
-      @_eh ||= hive_tiles.select{ |t| t.enemy? }[0]
+      @_eh ||= hive_tiles.select(&:enemy?)[0]
     end
     
     def hive_tiles
-      @_ht ||= @tiles.flatten.select{ |t| t.hive? }
+      @_ht ||= @tiles.flatten.select(&:hive?)
     end
 
   end

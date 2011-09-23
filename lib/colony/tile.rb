@@ -81,11 +81,11 @@ module Colony
       @owner = FRIENDLY
     end
 
-    def enemy?
+    def pwned?
       @owner == ENEMY
     end
 
-    def enemy
+    def pwn
       @owner = ENEMY
     end
  
