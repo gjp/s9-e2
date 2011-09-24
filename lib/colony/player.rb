@@ -58,15 +58,23 @@ module Colony
       end
     end
 
+    def can_gather?
+      @tile.resource? && (@food < @food_cap)
+    end
+
     def gather
-      if @tile.resource? && @food < @food_cap
-        @food = @food_cap
-        adjust_moves(-1)
-      end
+      return nil unless can_gather?
+      @food = @food_cap
+      adjust_moves(-1)
+    end
+
+    def can_build_sentry?
+      ( SENTRY_FOOD_COST <= @food ) && @tile.can_build_sentry?
     end
 
     def attract_sentry
-      return if SENTRY_FOOD_COST > @food or !@tile.build_sentry
+      return nil unless can_build_sentry?
+      @tile.build_sentry
       adjust_food(-SENTRY_FOOD_COST)
       adjust_moves(-1)
     end

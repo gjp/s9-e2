@@ -16,8 +16,8 @@ module Colony
     def update_display(player)
       say @game.map.to_s
 
-      show_status
-      show_options
+      show_status(player)
+      show_options(player)
     end
 
     def show_status(player)
@@ -32,7 +32,7 @@ module Colony
       o = []
       o << "WASD to move" if player.mobile?
       o << "g to gather" if player.can_gather?
-      o << "1 to attract a Sentry" if player.tile.can_build_sentry?
+      o << "1 to attract a Sentry" if player.can_build_sentry?
       say o.join(', ')
     end
 
