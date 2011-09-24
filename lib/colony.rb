@@ -1,6 +1,9 @@
+require 'highline/import'
 require 'highline/system_extensions'
+
 require_relative 'colony/version'
 require_relative 'colony/magic_numbers'
+
 require_relative 'colony/game'
 require_relative 'colony/map'
 require_relative 'colony/tile'
@@ -9,3 +12,4 @@ require_relative 'colony/player'
 require_relative 'colony/enemy'
 require_relative 'colony/sentry'
 require_relative 'colony/deck'
+require_relative 'colony/view'

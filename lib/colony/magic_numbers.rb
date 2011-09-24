@@ -16,18 +16,23 @@ module Colony
     ENEMY_ACCELERATION = 2
     ENEMY_CAPTURE_BONUS = 10
 
-    PLAYER_MOVEMENT = 4
+    PLAYER_MOVES = 5
     PLAYER_HP = 10
-    PLAYER_FOOD_CAP = 40
+    PLAYER_FOOD_CAP = 100
 
     SENTRY_HP = 10
     SENTRY_FOOD_COST = 20
+
+    MESSAGE_WIN =
+      "Your queen has matured! There she goes, off into the sunset."
+    MESSAGE_LOSE =
+      "Your hive has been overrun. Everybody dies...even the queen."
 
     GLYPHS = {
       empty: ' ',
       friendly: '.',
       enemy: '~',
-      neutral_node: 'o',
+      neutral_node: 'O',
       friendly_node: '*',
       hive: '#',
       sentry: '!'

@@ -1,37 +1,38 @@
 module Colony
   class Player
 
-    attr_reader :id, :hp, :food, :movement, :tile
+    attr_reader :id, :hp, :food, :moves, :tile
 
     include MagicNumbers
     include HighLine::SystemExtensions
 
-    def initialize(map, id)
+    def initialize(map, id, num_players)
       @map = map
       @id = id
+      @food_cap = PLAYER_FOOD_CAP / num_players
       reset
     end
 
     def reset
-      heal
-      reset_movement
+      reset_hp
+      reset_moves
       remove_food
       @hand = []
       @tile = move_to(@map.friendly_hive) if @map
     end
 
-    def reset_movement
-      @movement = PLAYER_MOVEMENT
+    def reset_moves
+      @moves = PLAYER_MOVES
     end
 
-    def heal
+    def reset_hp
       @hp = PLAYER_HP
     end
 
     def start_turn
       reset if dead?
-      draw_cards # TODO
-      reset_movement
+      draw_cards
+      reset_moves
     end
 
     def move_to(tile)
@@ -41,34 +42,37 @@ module Colony
     end
 
     def move(direction)
-      return false unless @movement > 0
+      return false unless @moves > 0
 
       if t = @tile.neighbor(direction)
         move_to(t)
 
         if t.pwned?
-          adjust_movement(-2)
+          adjust_moves(-2)
           adjust_hp(-1)
         else
           t.friendly
-          adjust_movement(-1)
+          adjust_moves(-1)
         end
 
       end
     end
 
     def gather
-      if @tile.resource? && @food < PLAYER_FOOD_CAP
-        @food = PLAYER_FOOD_CAP
-        # FIXME Possibly a rule change because this is so annoying
-        # @movement = 0
+      if @tile.resource? && @food < @food_cap
+        @food = @food_cap
+        adjust_moves(-1)
       end
     end
 
     def attract_sentry
-      return unless (@food >= SENTRY_FOOD_COST) && @tile.can_build_sentry?
-      @tile.build_sentry
+      return if SENTRY_FOOD_COST > @food or !@tile.build_sentry
       adjust_food(-SENTRY_FOOD_COST)
+      adjust_moves(-1)
+    end
+
+    def turn_ended?
+      dead? || !mobile?
     end
 
     def dead?
@@ -76,7 +80,7 @@ module Colony
     end
 
     def mobile?
-      @movement > 0
+      @moves > 0
     end
 
     def remove_food
@@ -92,8 +96,8 @@ module Colony
       [@food += food, 0].max
     end
 
-    def adjust_movement(move)
-      [@movement += move, 0].max
+    def adjust_moves(move)
+      [@moves += move, 0].max
     end
 
     def add_card(card)
@@ -117,7 +121,7 @@ module Colony
       'My, what big mandibles you have') {},
        speed: Card.new(
       'It is by caffeine alone I set my mind in motion') do |o|
-        o.adjust_movement(4)
+        o.adjust_moves(4)
       end,
     scavenge: Card.new(
       'All-you-can-eat buffet!') {|o| o.adjust_food(2) }

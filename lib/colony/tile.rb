@@ -79,6 +79,7 @@ module Colony
     end
 
     def build_sentry
+      return nil unless can_build_sentry?
       @sentry = Sentry.new(self)
     end
 

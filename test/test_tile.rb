@@ -31,6 +31,7 @@ describe Tile do
     end
 
     it "must build a sentry" do
+      @tile.friendly
       @tile.build_sentry
       @tile.sentry?.must_equal true
     end

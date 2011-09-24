@@ -31,6 +31,7 @@ describe Enemy do
 
     it "must attack sentry tiles" do
       t = Tile.new
+      t.friendly
       t.build_sentry
       @enemy.attack(t, 15).must_equal (15 - 1 - SENTRY_HP)
     end
@@ -38,7 +39,9 @@ describe Enemy do
     it "must choose to attack sentries first" do
       tiles = []
       100.times{ tiles << Tile.new }
-      tiles[rand(100)].build_sentry
+      s = tiles[rand(100)]
+      s.friendly
+      s.build_sentry
       t = @enemy.pick_from(tiles)
       t.sentry?.must_equal true
     end
@@ -47,13 +50,16 @@ describe Enemy do
       @enemy.grow_territory
       @map.enemy_tiles.size.must_equal ENEMY_BASE_GROWTH + 1
       @enemy.grow_territory
-      @map.enemy_tiles.size.must_equal (2 * ENEMY_BASE_GROWTH + 1 + ENEMY_ACCELERATION)
+      @map.enemy_tiles.size.must_equal(
+        2 * ENEMY_BASE_GROWTH + 1 + ENEMY_ACCELERATION
+      )
     end
 
     it "must be slowed by sentries" do
       # Drop a sentry right next to the hive
       # It will absorb the first growth unless the constants are tweaked hard
       c = @map.ripe_for_conquest.first
+      c.friendly
       c.build_sentry
       @enemy.grow_territory
       @map.enemy_tiles.size.must_equal 1
