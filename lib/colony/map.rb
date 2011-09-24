@@ -1,6 +1,5 @@
 module Colony
   class Map
-
     include MagicNumbers
 
     attr_reader :tiles
@@ -33,19 +32,24 @@ module Colony
       @tiles[MAP_ROWS-1][MAP_COLS-1].build_enemy_hive
     end
 
-    def build_resources
-      #FIXME: This needs a zoned algorithm to be somewhat fair
-      # for now it's just random
-      
-      nodes = 0
-      until nodes == RESOURCE_NODE_COUNT do
-        r = rand(MAP_ROWS)
-        c = rand(MAP_COLS)
+    # Completely random starting maps have too much influence on the game.
+    # This algorithm places the resource nodes at incrementally increasing
+    # distances from the starting hive in attempt to even things out.
 
+    def build_resources
+      delta = (MAP_ROWS + MAP_COLS) / (RESOURCE_NODE_COUNT + 1)
+      distance = delta 
+      nodes = 0
+      
+      until nodes == RESOURCE_NODE_COUNT do
+        r = rand( [MAP_ROWS, distance].min )
+        c = distance - r
+        next if c >= MAP_COLS
         next unless @tiles[r][c].empty?
 
         @tiles[r][c].build_resource
         nodes += 1
+        distance += delta
       end
     end
 
@@ -102,7 +106,7 @@ module Colony
     end
     
     def enemy_hive
-      @_eh ||= hive_tiles.select(&:enemy?)[0]
+      @_eh ||= hive_tiles.select(&:pwned?)[0]
     end
     
     def hive_tiles

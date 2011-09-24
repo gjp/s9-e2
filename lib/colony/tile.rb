@@ -3,6 +3,7 @@ module Colony
     include MagicNumbers
 
     attr_reader :owner, :neighbors
+    attr_accessor :sentry
 
     def initialize
       @owner = NEUTRAL
@@ -22,9 +23,9 @@ module Colony
     end
 
     def to_s
-      # FIXME: Having multiple overlapping items in a tile is currently a problem.
-      # Need color or graphics, otherwise players obscure what they're standing on,
-      # including each other :(
+      # FIXME: Having multiple overlapping items in a tile is currently
+      # a problem. We need color or graphics, otherwise players obscure
+      # what they're standing on, including each other :(
       
       if @players.size > 0
         @players[0]
@@ -61,12 +62,20 @@ module Colony
       @players.delete(player)
     end
 
+    def remove_sentry
+      @sentry = nil
+    end
+
     def empty?
       !@hive && !@resource && !@sentry && @players.size == 0
     end
 
     def build_resource
       @resource = true
+    end
+
+    def build_sentry
+      @sentry = Sentry.new(self)
     end
 
     def neutral?

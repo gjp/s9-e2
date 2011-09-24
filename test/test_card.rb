@@ -8,7 +8,7 @@ describe Card do
     @card = Card.new('Flava') {}
   end
  
-  describe "a deck of cards" do
+  describe "a card" do
     it "should initialize" do
       @card.flavor.must_equal 'Flava'
     end

@@ -1,48 +1,58 @@
 module Colony
   class Enemy
-
     include MagicNumbers
+
+    attr_reader :moves_per_turn
 
     def initialize(map)
       @map = map
-      @sentry = nil
-      @expansion = ENEMY_BASE_EXPANSION
+      @moves_per_turn = ENEMY_BASE_GROWTH
     end
 
-    def turn
-      expand_territory
-    end
-
-    def increase_expansion(i)
-      @expansion += i
-    end
-
-    # FIXME factor this
-    def expand_territory
-      puts "Expanding enemy territory..."
-      movement = @expansion
+    def grow_territory
+      moves = @moves_per_turn
       choices = @map.ripe_for_conquest
-      player_engulfed = false 
-
-      # FIXME If we're attacking a sentry, try to finish it off first.
       
-      while movement > 0 
-        tile = choices.sample
-        choices.delete(tile)
+      while moves > 0 
+        tile = pick_from(choices)
+        return nil unless tile
 
-        tile.friendly? ? movement -= 2 : movement -= 1
-        tile.pwn
+        moves = attack(tile, moves)
+        choices.delete(tile) unless tile.sentry?
 
-        if tile.resource?
-          increase_expansion(ENEMY_CAPTURE_BONUS)
-          movement += ENEMY_CAPTURE_BONUS
+        if moves >= 0
+          tile.pwn
+          tile.neighbors.each_value do |t|
+            choices << t unless t.pwned?
+          end
         end
-
-        tile.neighbors.each_value { |n| choices << n unless n.pwned? }
       end
 
-      increase_expansion(ENEMY_ACCELERATION)
+      accelerate_growth(ENEMY_ACCELERATION)
     end
-    
+
+    def attack(tile, moves)
+      if tile.sentry?
+        moves = tile.sentry.damage(moves)
+
+      elsif tile.friendly?
+        moves -= 1
+
+      elsif tile.resource?
+        accelerate_growth(ENEMY_CAPTURE_BONUS)
+        moves += ENEMY_CAPTURE_BONUS
+      end
+
+      moves - 1
+    end
+
+    def accelerate_growth(i)
+      @moves_per_turn += i
+    end
+
+    def pick_from(choices)
+      choices.select(&:sentry?).first || choices.sample
+    end
+
   end
 end

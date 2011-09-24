@@ -50,7 +50,7 @@ module Colony
         gather_resources
         win if win?
 
-        @enemy.turn
+        @enemy.grow_territory
         lose if lose?
       end
     end 
@@ -60,8 +60,8 @@ module Colony
       puts @map.to_s
 
       puts "Round #{@round}: Your hive has #{@team_resources} food."
-      puts "Player #{player.id}: You have #{player.hp} HP, #{player.food} food,"\
-           " and #{player.movement} movement"
+      puts "Player #{player.id}: You have #{player.hp} HP,"\
+           " #{player.food} food, and #{player.movement} movement"
       # FIXME only display available moves
       puts "WASD to move, 1 or 2 to play a card"
     end
@@ -95,7 +95,7 @@ module Colony
 
     def turn_over?(player)
       if player.hp <= 0
-        puts "*** Oh noes! You have died! You'll respawn at the hive next round. ***"
+        puts "Oh noes! You have died! You'll respawn at the hive next round."
         player.reset
         true
       elsif player.movement <= 0

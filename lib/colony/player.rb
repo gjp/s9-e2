@@ -43,7 +43,6 @@ module Colony
     end
 
     def start_turn
-      puts "\n***** Player #{@id}'s turn begins *****"
       draw_cards #stub
       @movement = PLAYER_MOVEMENT
     end
@@ -57,15 +56,11 @@ module Colony
    end
 
     def adjust_food(food)
-      @food += food 
-      @food = 0 if @food < 0
-      @food
+      [@food += food, 0].max
     end
 
     def adjust_movement(move)
-      @movement += move
-      @movement = 0 if @movement < 0
-      @movement
+      [@movement += move, 0].max
     end
 
     def add_card(card)
@@ -84,7 +79,9 @@ module Colony
       sentry: Card.new(
       'My, what big mandibles you have') {},
        speed: Card.new(
-      'It is by caffeine alone I set my mind in motion.') {|o| o.adjust_movement(2) },
+      'It is by caffeine alone I set my mind in motion.') do |o|
+        o.adjust_movement(4)
+      end,
     scavenge: Card.new(
       'All-you-can-eat buffet') {|o| o.adjust_food(2) }
     }
