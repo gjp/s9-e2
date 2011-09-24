@@ -44,12 +44,12 @@ module Colony
       until nodes == RESOURCE_NODE_COUNT do
         r = rand( [MAP_ROWS, distance].min )
         c = distance - r
-        next if c >= MAP_COLS
-        next unless @tiles[r][c].empty?
+
+        next if c >= MAP_COLS or !@tiles[r][c].empty?
 
         @tiles[r][c].build_resource
-        nodes += 1
         distance += delta
+        nodes += 1
       end
     end
 
@@ -73,7 +73,7 @@ module Colony
       @tiles.size
     end
 
-   def ripe_for_conquest
+    def ripe_for_conquest
       available_tiles = []
 
       enemy_tiles.select do |t|

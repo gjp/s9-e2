@@ -18,9 +18,10 @@ module Colony
 
     PLAYER_MOVEMENT = 4
     PLAYER_HP = 10
-    PLAYER_FOOD_CAP = 10
+    PLAYER_FOOD_CAP = 40
 
     SENTRY_HP = 10
+    SENTRY_FOOD_COST = 20
 
     GLYPHS = {
       empty: ' ',

@@ -1,28 +1,42 @@
 module Colony
   class Player
 
-    attr_accessor :id, :hp, :food, :movement
+    attr_reader :id, :hp, :food, :movement, :tile
 
     include MagicNumbers
     include HighLine::SystemExtensions
 
     def initialize(map, id)
-      @map = map #hrrrrm.
+      @map = map
       @id = id
       reset
     end
 
     def reset
-      @hp = PLAYER_HP
-      @food = 0
-      @movement = PLAYER_MOVEMENT
+      heal
+      reset_movement
+      remove_food
       @hand = []
       @tile = move_to(@map.friendly_hive) if @map
     end
 
+    def reset_movement
+      @movement = PLAYER_MOVEMENT
+    end
+
+    def heal
+      @hp = PLAYER_HP
+    end
+
+    def start_turn
+      reset if dead?
+      draw_cards # TODO
+      reset_movement
+    end
+
     def move_to(tile)
-      @tile.remove_player(@id) if @tile
-      tile.add_player(@id)
+      @tile.remove_player(self) if @tile
+      tile.add_player(self)
       @tile = tile
     end
 
@@ -39,21 +53,40 @@ module Colony
           t.friendly
           adjust_movement(-1)
         end
+
       end
     end
 
-    def start_turn
-      draw_cards #stub
-      @movement = PLAYER_MOVEMENT
+    def gather
+      if @tile.resource? && @food < PLAYER_FOOD_CAP
+        @food = PLAYER_FOOD_CAP
+        # FIXME Possibly a rule change because this is so annoying
+        # @movement = 0
+      end
     end
 
-    def draw_cards
-      #FIXME
+    def attract_sentry
+      return unless (@food >= SENTRY_FOOD_COST) && @tile.can_build_sentry?
+      @tile.build_sentry
+      adjust_food(-SENTRY_FOOD_COST)
+    end
+
+    def dead?
+      @hp <= 0
+    end
+
+    def mobile?
+      @movement > 0
+    end
+
+    def remove_food
+      f, @food = @food, 0
+      f
     end
 
     def adjust_hp(hp)
       @hp += hp
-   end
+    end
 
     def adjust_food(food)
       [@food += food, 0].max
@@ -71,6 +104,10 @@ module Colony
       @hand.delete(card)
     end
 
+    def draw_cards
+      #FIXME
+    end
+
     def play_card(card)
       PLAYER_CARDS[card].play(self)
     end
@@ -79,11 +116,11 @@ module Colony
       sentry: Card.new(
       'My, what big mandibles you have') {},
        speed: Card.new(
-      'It is by caffeine alone I set my mind in motion.') do |o|
+      'It is by caffeine alone I set my mind in motion') do |o|
         o.adjust_movement(4)
       end,
     scavenge: Card.new(
-      'All-you-can-eat buffet') {|o| o.adjust_food(2) }
+      'All-you-can-eat buffet!') {|o| o.adjust_food(2) }
     }
 
   end

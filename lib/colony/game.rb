@@ -38,27 +38,27 @@ module Colony
     end
 
     def game_loop
-      until @game_over
-        @round += 1
+      catch :game_over do
+        loop do
+          @round += 1
 
-        @players.each do |player|
-          player.start_turn
-          input_for(player)
-          win && break if win?
+          @players.each do |player|
+            player.start_turn
+            input_for(player)
+            end_game(:win) if win?
+          end
+
+          gather_resources
+          end_game(:win) if win?
+
+          @enemy.grow_territory
+          end_game(:lose) if lose?
         end
-
-        gather_resources
-        win if win?
-
-        @enemy.grow_territory
-        lose if lose?
       end
     end 
 
     def update_display(player)
-      puts
-      puts @map.to_s
-
+      puts; puts @map.to_s
       puts "Round #{@round}: Your hive has #{@team_resources} food."
       puts "Player #{player.id}: You have #{player.hp} HP,"\
            " #{player.food} food, and #{player.movement} movement"
@@ -67,54 +67,42 @@ module Colony
     end
 
     def input_for(player)
-      turn_over = false
-
       until turn_over?(player)
         update_display(player)
 
         k = get_character
 
+        # TODO end turn, end game, trade?
         case k.chr
-        when 'w'
-          player.move(:up)
-        when 'a'
-          player.move(:left)
-        when 's'
-          player.move(:down)
-        when 'd'
-          player.move(:right)
-        when '1'
-          puts 'play card 1'
-        when '2'
-          puts 'play card 2'
-        else
-          puts 'invalid move'
+        when 'w' then player.move(:up)
+        when 'a' then player.move(:left)
+        when 's' then player.move(:down)
+        when 'd' then player.move(:right)
+        when 'g' then player.gather
+        when '1' then player.attract_sentry
+        when '2' then puts 'play card 2'
+        else puts 'invalid move'
+        end
+
+        @map.friendly_hive.players.each do |p|
+          p.heal
+          @team_resources += p.remove_food
         end
       end
     end
 
     def turn_over?(player)
-      if player.hp <= 0
-        puts "Oh noes! You have died! You'll respawn at the hive next round."
-        player.reset
-        true
-      elsif player.movement <= 0
-        true
+      player.dead? || !player.mobile?
+    end
+
+    def end_game(status)
+      puts @map.to_s
+      if status == :win
+        puts "Your queen has matured! There she goes, off into the sunset."
       else
-        false
+        puts "Your hive has been overrun. Everybody dies...even the queen."
       end
-    end
-
-    def win
-      puts @map.to_s
-      puts "Your queen has matured! There she goes, off into the sunset."
-      @game_over = true
-    end
-
-    def lose
-      puts @map.to_s
-      puts "Your hive has been overrun. Everybody dies...even the queen."
-      @game_over = true
+      throw :game_over
     end
  
     def win?

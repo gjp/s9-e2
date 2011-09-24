@@ -2,7 +2,7 @@ module Colony
   class Tile
     include MagicNumbers
 
-    attr_reader :owner, :neighbors
+    attr_reader :owner, :neighbors, :players
     attr_accessor :sentry
 
     def initialize
@@ -28,7 +28,7 @@ module Colony
       # what they're standing on, including each other :(
       
       if @players.size > 0
-        @players[0]
+        @players[0].id
       elsif @hive
         GLYPHS[:hive]
       elsif @resource
@@ -68,6 +68,10 @@ module Colony
 
     def empty?
       !@hive && !@resource && !@sentry && @players.size == 0
+    end
+
+    def can_build_sentry?
+      !@hive && !@resource && !@sentry && friendly?
     end
 
     def build_resource
