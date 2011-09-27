@@ -1,6 +1,6 @@
 module Colony
   class Game
-    attr_reader :map, :players, :team_resources, :round
+    attr_reader :map, :players, :hive_food, :round
 
     include MagicNumbers
 
@@ -10,12 +10,14 @@ module Colony
     end
 
     def initialize
-      @view = View.new(self)
-      @map = Map.new
-      @enemy = Enemy.new(@map)
+      @view      = View.new(self)
+      @map       = Map.new
+      @enemy     = Enemy.new(@map)
+      @deck      = Deck.new
+      @discard   = []
 
-      @team_resources = 0
-      @round = 0
+      @hive_food = 0
+      @round     = 0
       @game_over = false
     end
 
@@ -28,7 +30,13 @@ module Colony
 
     def add_player(i)
       @players ||= []
-      @players << Player.new(@map, i, @num_players)
+      @players << Player.new(
+        id: i,
+        num_players: @num_players,
+        map: @map,
+        deck: @deck,
+        discard: @discard
+      )
     end
 
     def game_loop
@@ -43,9 +51,11 @@ module Colony
 
             until player.turn_ended?
               @view.input_for(player)
-              deposit_resources
+              turn_bookkeeping
               throw(:win_by_player) if win?
             end
+
+            player.end_turn
           end
         end
 
@@ -63,7 +73,7 @@ module Colony
     end
  
     def win?
-      @team_resources >= WINNING_RESOURCE_COUNT
+      @hive_food >= WINNING_RESOURCE_COUNT
     end
 
     def lose?
@@ -72,14 +82,25 @@ module Colony
 
     def gather_resources
       c = @map.friendly_resource_tiles.count
-      @team_resources += c * RESOURCES_GATHERED_PER_ROUND
+      @hive_food += c * RESOURCES_GATHERED_PER_ROUND
+    end
+
+    def turn_bookkeeping
+      deposit_resources
+      recycle_discard
     end
 
     def deposit_resources
       @map.friendly_hive.players.each do |p|
         p.reset_hp
-        @team_resources += p.remove_food
+        @hive_food += p.remove_food
       end
+    end
+
+    def recycle_discard
+      return if @deck.size > 0
+      @deck.insert(@discard)
+      @deck.shuffle
     end
 
     def force_quit

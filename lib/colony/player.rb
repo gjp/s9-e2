@@ -1,15 +1,14 @@
 module Colony
   class Player
 
-    attr_reader :id, :hp, :food, :moves, :tile
+    attr_reader :id, :hp, :food, :moves, :hand, :tile
 
     include MagicNumbers
     include HighLine::SystemExtensions
 
-    def initialize(map, id, num_players)
-      @map = map
-      @id = id
-      @food_cap = PLAYER_FOOD_CAP / num_players
+    def initialize(args)
+      args.each { |k,v| instance_variable_set('@'+k.to_s, v) }
+      @food_cap = PLAYER_FOOD_CAP / @num_players
       reset
     end
 
@@ -18,6 +17,7 @@ module Colony
       reset_moves
       remove_food
       @hand = []
+      @immunity = false
       @tile = move_to(@map.friendly_hive) if @map
     end
 
@@ -48,13 +48,15 @@ module Colony
         move_to(t)
 
         if t.pwned?
-          adjust_moves(-2)
-          adjust_hp(-1)
-        else
+          unless immune?
+            adjust_moves(-1)
+            adjust_hp(-1)
+          end
+        elsif t.neutral?
           t.friendly
-          adjust_moves(-1)
         end
 
+        adjust_moves(-1)
       end
     end
 
@@ -91,6 +93,18 @@ module Colony
       @moves > 0
     end
 
+    def immune
+      @immunity = true
+    end
+
+    def immune?
+      @immunity
+    end
+
+    def end_turn
+      @immunity = false
+    end
+
     def remove_food
       f, @food = @food, 0
       f
@@ -101,11 +115,11 @@ module Colony
     end
 
     def adjust_food(food)
-      [@food += food, 0].max
+      @food = [ [@food += food, 0].max, @food_cap].min
     end
 
     def adjust_moves(move)
-      [@moves += move, 0].max
+      @moves = [@moves += move, 0].max
     end
 
     def add_card(card)
@@ -113,27 +127,21 @@ module Colony
     end
 
     def remove_card(card)
-      @hand.delete(card)
+      @hand.delete_at( @hand.index(card) )
     end
 
     def draw_cards
-      #FIXME
+      until @hand.size == PLAYER_HAND_SIZE do
+        @hand << @deck.draw
+      end
     end
 
     def play_card(card)
-      PLAYER_CARDS[card].play(self)
+      return nil unless card
+      if card.play(self)
+        @discard << remove_card(card)
+      end
     end
-
-    PLAYER_CARDS = {
-      sentry: Card.new(
-      'My, what big mandibles you have') {},
-       speed: Card.new(
-      'It is by caffeine alone I set my mind in motion') do |o|
-        o.adjust_moves(4)
-      end,
-    scavenge: Card.new(
-      'All-you-can-eat buffet!') {|o| o.adjust_food(2) }
-    }
 
   end
 end

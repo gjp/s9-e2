@@ -9,7 +9,8 @@ module Colony
     end
 
     def prompt_for_players
-      say "Colony - a console game about giant bugs."
+      say '*** Colony - a console game about giant bugs. ***'
+      say ''
       ask("Number of players? (2-4) ", Integer) { |q| q.in = 1..4 }
     end
 
@@ -22,7 +23,7 @@ module Colony
 
     def show_status(player)
       say "Round #{@game.round}: "
-      say "Your hive has #{@game.team_resources} food."
+      say "Your hive has #{@game.hive_food} food."
 
       say "Player #{player.id}: You have #{player.hp} HP, "
       say "#{player.food} food, and #{player.moves} moves"
@@ -30,9 +31,17 @@ module Colony
 
     def show_options(player)
       o = []
-      o << "WASD to move" if player.mobile?
+      o << "wasd to move" if player.mobile?
       o << "g to gather" if player.can_gather?
-      o << "1 to attract a Sentry" if player.can_build_sentry?
+
+      unless player.hand.empty?
+        card_desc = []
+        player.hand.each_with_index do |c, i|
+          card_desc << "(#{i + 1}) #{c.name}"
+        end
+        o << "or play cards: " + card_desc.join(' ')
+      end
+
       say o.join(', ')
     end
 
@@ -48,8 +57,8 @@ module Colony
       when 's' then player.move(:down)
       when 'd' then player.move(:right)
       when 'g' then player.gather
-      when '1' then player.attract_sentry
-      when '2' then puts 'play card 2'
+      when '1' then player.play_card(player.hand[0])
+      when '2' then player.play_card(player.hand[1])
       else puts 'invalid move'
       end
     end

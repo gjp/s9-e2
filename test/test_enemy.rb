@@ -37,6 +37,7 @@ describe Enemy do
     end
 
     it "must choose to attack sentries first" do
+      # Probabalistic test...random selection is random
       tiles = []
       100.times{ tiles << Tile.new }
       s = tiles[rand(100)]

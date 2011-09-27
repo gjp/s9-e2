@@ -29,15 +29,15 @@ module Colony
       
       if @players.size > 0
         @players[0].id
-      elsif @hive
+      elsif hive?
         GLYPHS[:hive]
-      elsif @resource
-        @owner == FRIENDLY ? GLYPHS[:friendly_node] : GLYPHS[:neutral_node]
-      elsif @sentry
+      elsif resource?
+        friendly? ? GLYPHS[:friendly_node] : GLYPHS[:neutral_node]
+      elsif sentry?
         GLYPHS[:sentry]
-      elsif @owner == FRIENDLY
+      elsif friendly?
         GLYPHS[:friendly]
-      elsif @owner == ENEMY
+      elsif pwned?
         GLYPHS[:enemy]
       else
         GLYPHS[:empty]
@@ -54,12 +54,12 @@ module Colony
       @owner = ENEMY
     end
 
-    def add_player(player)
-      @players << player
+    def add_player(p)
+      @players << p
     end
 
-    def remove_player(player)
-      @players.delete(player)
+    def remove_player(p)
+      @players.delete(p)
     end
 
     def remove_sentry

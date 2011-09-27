@@ -19,6 +19,7 @@ module Colony
     PLAYER_MOVES = 5
     PLAYER_HP = 10
     PLAYER_FOOD_CAP = 100
+    PLAYER_HAND_SIZE = 2
 
     SENTRY_HP = 10
     SENTRY_FOOD_COST = 20
