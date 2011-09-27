@@ -1,6 +1,5 @@
 module Colony
   class Sentry
-
     include MagicNumbers
 
     def initialize(tile)

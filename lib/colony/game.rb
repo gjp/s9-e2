@@ -1,8 +1,8 @@
 module Colony
   class Game
-    attr_reader :map, :players, :hive_food, :round
-
     include MagicNumbers
+
+    attr_reader :map, :players, :hive_food, :round
 
     def self.run
       game = new

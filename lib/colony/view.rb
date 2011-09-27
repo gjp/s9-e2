@@ -10,7 +10,6 @@ module Colony
 
     def prompt_for_players
       say '*** Colony - a console game about giant bugs. ***'
-      say ''
       ask("Number of players? (2-4) ", Integer) { |q| q.in = 1..4 }
     end
 
@@ -50,7 +49,7 @@ module Colony
 
       k = get_character
 
-      # TODO end turn?
+      # TODO end turn, discard
       case k.chr
       when 'w' then player.move(:up)
       when 'a' then player.move(:left)

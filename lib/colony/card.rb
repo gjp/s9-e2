@@ -2,7 +2,6 @@ module Colony
   include MagicNumbers
 
   class Card
-
     attr_reader :name, :flavor, :count
 
     def initialize(args, &callback)
@@ -15,7 +14,6 @@ module Colony
     def play(*a)
       @action.call(*a)
     end
-
   end
 
   PLAYER_CARDS = {

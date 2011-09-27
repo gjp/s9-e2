@@ -32,5 +32,6 @@ module Colony
         PLAYER_CARDS[k].count.times{ @cards << PLAYER_CARDS[k].dup }
       end
     end
+
   end
 end

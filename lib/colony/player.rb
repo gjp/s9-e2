@@ -1,10 +1,8 @@
 module Colony
   class Player
+    include MagicNumbers
 
     attr_reader :id, :hp, :food, :moves, :hand, :tile
-
-    include MagicNumbers
-    include HighLine::SystemExtensions
 
     def initialize(args)
       args.each { |k,v| instance_variable_set('@'+k.to_s, v) }
