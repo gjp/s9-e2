@@ -78,7 +78,6 @@ module Colony
       return nil unless can_build_sentry?
       @tile.build_sentry
       adjust_food(-SENTRY_FOOD_COST)
-      adjust_moves(-1)
     end
 
     def turn_ended?
@@ -140,6 +139,7 @@ module Colony
       return nil unless card
       if card.play(self)
         @discard << remove_card(card)
+        adjust_moves(-1)
       end
     end
 

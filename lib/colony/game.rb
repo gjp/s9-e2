@@ -70,6 +70,7 @@ module Colony
     def end_game(status)
       @game_over = true
       @view.show_end_message(status)
+      exit
     end
  
     def win?
