@@ -2,7 +2,7 @@ module Colony
   class Game
     include MagicNumbers
 
-    attr_reader :map, :players, :hive_food, :round
+    attr_reader :map, :players, :hive_food, :food_to_win, :round
 
     def self.run
       game = new
@@ -23,6 +23,8 @@ module Colony
 
     def greet
       @num_players = @view.prompt_for_players
+      @food_to_win = FOOD_REQUIRED_PER_PLAYER * @num_players
+
       1.upto(@num_players) { |i| add_player(i) }
 
       game_loop
@@ -32,7 +34,6 @@ module Colony
       @players ||= []
       @players << Player.new(
         id: i,
-        num_players: @num_players,
         map: @map,
         deck: @deck,
         discard: @discard
@@ -50,12 +51,12 @@ module Colony
             player.start_turn
 
             until player.turn_ended?
+              @view.update_display(player)
               @view.input_for(player)
               turn_bookkeeping
               throw(:win_by_player) if win?
             end
 
-            player.end_turn
           end
         end
 
@@ -74,7 +75,7 @@ module Colony
     end
  
     def win?
-      @hive_food >= WINNING_RESOURCE_COUNT
+      @hive_food >= FOOD_REQUIRED_PER_PLAYER * @num_players
     end
 
     def lose?
@@ -83,7 +84,7 @@ module Colony
 
     def gather_resources
       c = @map.friendly_resource_tiles.count
-      @hive_food += c * RESOURCES_GATHERED_PER_ROUND
+      @hive_food += c * FOOD_GATHERED_PER_ROUND
     end
 
     def turn_bookkeeping
@@ -99,7 +100,7 @@ module Colony
     end
 
     def recycle_discard
-      return if @deck.size > 0
+      return if @deck.size >= PLAYER_HAND_SIZE
       @deck.insert(@discard)
       @deck.shuffle
     end

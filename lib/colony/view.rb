@@ -22,16 +22,16 @@ module Colony
 
     def show_status(player)
       say "Round #{@game.round}: "
-      say "Your hive has #{@game.hive_food} food."
+      say "Your hive has #{@game.hive_food} of #{@game.food_to_win} food."
 
       say "Player #{player.id}: You have #{player.hp} HP, "
       say "#{player.food} food, and #{player.moves} moves"
     end
 
     def show_options(player)
-      o = []
-      o << "wasd to move" if player.mobile?
-      o << "g to gather" if player.can_gather?
+      o = ['e to end turn']
+      o << 'wasd to move' if player.mobile?
+      o << 'g to gather' if player.can_gather?
 
       unless player.hand.empty?
         card_desc = []
@@ -45,8 +45,6 @@ module Colony
     end
 
     def input_for(player)
-      update_display(player)
-
       k = get_character
 
       # TODO end turn, discard
@@ -58,6 +56,7 @@ module Colony
       when 'g' then player.gather
       when '1' then player.play_card(player.hand[0])
       when '2' then player.play_card(player.hand[1])
+      when 'e' then player.end_turn
       else puts 'invalid move'
       end
     end

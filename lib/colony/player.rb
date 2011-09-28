@@ -4,9 +4,12 @@ module Colony
 
     attr_reader :id, :hp, :food, :moves, :hand, :tile
 
-    def initialize(args)
-      args.each { |k,v| instance_variable_set('@'+k.to_s, v) }
-      @food_cap = PLAYER_FOOD_CAP / @num_players
+    def initialize(params)
+      @id      = params[:id]
+      @map     = params[:map]
+      @deck    = params[:deck]
+      @discard = params[:discard]
+
       reset
     end
 
@@ -14,8 +17,8 @@ module Colony
       reset_hp
       reset_moves
       remove_food
+      remove_immunity
       @hand = []
-      @immunity = false
       @tile = move_to(@map.friendly_hive) if @map
     end
 
@@ -29,6 +32,7 @@ module Colony
 
     def start_turn
       reset if dead?
+      remove_immunity
       draw_cards
       reset_moves
     end
@@ -59,12 +63,12 @@ module Colony
     end
 
     def can_gather?
-      @tile.resource? && (@food < @food_cap)
+      @tile.resource? && (@food < PLAYER_FOOD_CAP)
     end
 
     def gather
       return nil unless can_gather?
-      @food = @food_cap
+      @food = PLAYER_FOOD_CAP
       adjust_moves(-1)
     end
 
@@ -78,6 +82,10 @@ module Colony
       adjust_food(-SENTRY_FOOD_COST)
     end
 
+    def end_turn
+      @moves = 0
+    end
+
     def turn_ended?
       dead? || !mobile?
     end
@@ -86,19 +94,27 @@ module Colony
       @hp <= 0
     end
 
+    def adjust_hp(hp)
+      @hp += hp
+    end
+
     def mobile?
       @moves > 0
     end
 
-    def immune
-      @immunity = true
+    def adjust_moves(move)
+      @moves = [@moves += move, 0].max
     end
 
     def immune?
       @immunity
     end
 
-    def end_turn
+    def immune
+      @immunity = true
+    end
+
+    def remove_immunity
       @immunity = false
     end
 
@@ -107,16 +123,8 @@ module Colony
       f
     end
 
-    def adjust_hp(hp)
-      @hp += hp
-    end
-
     def adjust_food(food)
-      @food = [ [@food += food, 0].max, @food_cap].min
-    end
-
-    def adjust_moves(move)
-      @moves = [@moves += move, 0].max
+      @food = [ [@food += food, 0].max, PLAYER_FOOD_CAP].min
     end
 
     def add_card(card)

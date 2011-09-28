@@ -24,9 +24,9 @@ module Colony
   ) { |o| o.adjust_moves(PLAYER_MOVES) },
     scavenge: Card.new(
       name: 'Scavenger',
-      flavor: 'All-you-can-eat buffet',
+      flavor: 'Definitely does not taste like chicken.',
       count: 10
-  ) { |o| o.adjust_food(100) },
+  ) { |o| o.adjust_food(SENTRY_FOOD_COST) },
     cologne: Card.new(
       name: 'Alien Cologne',
       flavor: 'Gee, your carapace smells terrific!',

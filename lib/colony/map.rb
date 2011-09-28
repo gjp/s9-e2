@@ -37,11 +37,11 @@ module Colony
     # distances from the starting hive in attempt to even things out.
 
     def build_resources
-      delta = (MAP_ROWS + MAP_COLS) / (RESOURCE_NODE_COUNT + 1)
+      delta = (MAP_ROWS + MAP_COLS) / (FOOD_NODE_COUNT + 1)
       distance = delta 
       nodes = 0
       
-      until nodes == RESOURCE_NODE_COUNT do
+      until nodes == FOOD_NODE_COUNT do
         r = rand( [MAP_ROWS, distance].min )
         c = distance - r
 
