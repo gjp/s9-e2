@@ -72,13 +72,13 @@ module Colony
       adjust_moves(-1)
     end
 
-    def can_build_sentry?
-      ( SENTRY_FOOD_COST <= @food ) && @tile.can_build_sentry?
+    def can_attract_sentry?
+      ( SENTRY_FOOD_COST <= @food ) && @tile.can_attract_sentry?
     end
 
     def attract_sentry
-      return nil unless can_build_sentry?
-      @tile.build_sentry
+      return nil unless can_attract_sentry?
+      @tile.attract_sentry
       adjust_food(-SENTRY_FOOD_COST)
     end
 

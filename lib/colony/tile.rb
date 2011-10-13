@@ -70,7 +70,7 @@ module Colony
       !@hive && !@resource && !@sentry && @players.size == 0
     end
 
-    def can_build_sentry?
+    def can_attract_sentry?
       !@hive && !@resource && !@sentry && friendly?
     end
 
@@ -78,8 +78,8 @@ module Colony
       @resource = true
     end
 
-    def build_sentry
-      return nil unless can_build_sentry?
+    def attract_sentry
+      return nil unless can_attract_sentry?
       @sentry = Sentry.new(self)
     end
 
