@@ -75,5 +75,5 @@ Players may gather from a resource node. This may be carried home or used to att
 - UX was the lowest priority for the original scope. The only way to make this more primitive would be to run it via Teletype.
 - No mechanism for manual discard.
 - Ferrying food home ought to be a desperation move; need motivation to guard nodes or do something cooperatively on the front lines rather than spamming sentries. 'cologne' is currently useless.
-- Tighly-coupled code, why do you taunt me so?
+- Tightly-coupled code, why do you taunt me so?
 - Game balance is really hard.
