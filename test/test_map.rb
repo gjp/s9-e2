@@ -21,7 +21,7 @@ describe Map do
     end
 
     it "must build resource nodes" do
-      @map.resource_tiles.size.must_equal RESOURCE_NODE_COUNT
+      @map.resource_tiles.size.must_equal FOOD_NODE_COUNT
     end
 
     it "must tell us which tiles are ripe for conquest" do

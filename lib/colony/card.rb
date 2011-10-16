@@ -11,7 +11,7 @@ module Colony
       @action = callback
     end
 
-    def play(*a)
+    def play_on(*a)
       @action.call(*a)
     end
   end

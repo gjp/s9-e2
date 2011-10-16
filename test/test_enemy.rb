@@ -32,7 +32,7 @@ describe Enemy do
     it "must attack sentry tiles" do
       t = Tile.new
       t.friendly
-      t.build_sentry
+      t.attract_sentry
       @enemy.attack(t, 15).must_equal (15 - 1 - SENTRY_HP)
     end
 
@@ -42,7 +42,7 @@ describe Enemy do
       100.times{ tiles << Tile.new }
       s = tiles[rand(100)]
       s.friendly
-      s.build_sentry
+      s.attract_sentry
       t = @enemy.pick_from(tiles)
       t.sentry?.must_equal true
     end
@@ -61,7 +61,7 @@ describe Enemy do
       # It will absorb the first growth unless the constants are tweaked hard
       c = @map.ripe_for_conquest.first
       c.friendly
-      c.build_sentry
+      c.attract_sentry
       @enemy.grow_territory
       @map.enemy_tiles.size.must_equal 1
     end

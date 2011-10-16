@@ -30,9 +30,9 @@ describe Tile do
       @tile.pwned?.must_equal true
     end
 
-    it "must build a sentry" do
+    it "must attract a sentry" do
       @tile.friendly
-      @tile.build_sentry
+      @tile.attract_sentry
       @tile.sentry?.must_equal true
     end
 

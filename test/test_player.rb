@@ -6,7 +6,7 @@ include MagicNumbers
 describe Player do
   before do
     @map = Map.new
-    @player = Player.new(@map, 1, 2)
+    @player = Player.new(id: 1, map: @map, discard: [])
   end
  
   it "must initialize" do
@@ -37,10 +37,11 @@ describe Player do
     t = @map.resource_tiles.first
     @player.move_to(t)
     @player.gather
-    @player.food.must_equal PLAYER_FOOD_CAP / 2
+    @player.food.must_equal PLAYER_FOOD_CAP
   end
 
   it "must play a card" do
-    @player.play_card(:speed)
+    @player.add_card(PLAYER_CARDS[:speed])
+    @player.play_card(0)
   end
 end

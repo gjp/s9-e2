@@ -132,7 +132,7 @@ module Colony
     end
 
     def remove_card(card)
-      @hand.delete_at( @hand.index(card) )
+      @hand.delete_at( card )
     end
 
     def draw_cards
@@ -143,7 +143,7 @@ module Colony
 
     def play_card(card)
       return nil unless card
-      if card.play(self)
+      if @hand[card].play_on(self)
         @discard << remove_card(card)
         adjust_moves(-1)
       end

@@ -54,8 +54,8 @@ module Colony
       when 's' then player.move(:down)
       when 'd' then player.move(:right)
       when 'g' then player.gather
-      when '1' then player.play_card(player.hand[0])
-      when '2' then player.play_card(player.hand[1])
+      when '1' then player.play_card(0)
+      when '2' then player.play_card(1)
       when 'e' then player.end_turn
       else puts 'invalid move'
       end
