@@ -142,7 +142,8 @@ module Colony
     end
 
     def play_card(card)
-      return nil unless card
+      return nil unless card && @hand[card]
+
       if @hand[card].play_on(self)
         @discard << remove_card(card)
         adjust_moves(-1)
